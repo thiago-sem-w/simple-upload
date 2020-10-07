@@ -1,6 +1,9 @@
 'use strict'
 
 require('dotenv').config()
+
+const fs = require('fs')
+
 const express = require('express')
 const compression = require('compression')
 const helmet = require('helmet')
@@ -8,7 +11,8 @@ const cors = require('cors')
 const morgan = require('morgan')
 const mongoose = require('mongoose')
 
-const databaseConfig = require('../config/database')
+const { uploadsDir, databaseConfig } = require('../config')
+const routes = require('./routes')
 
 const app = express()
 app.set('port', process.env.PORT || 5000)
@@ -23,6 +27,12 @@ if (app.get('env') === 'development') {
 
 mongoose.connect(databaseConfig.uri, databaseConfig.settings)
 mongoose.connection.on('error', console.log)
+
+app.use(routes)
+
+if (!fs.existsSync(uploadsDir)) {
+	fs.mkdirSync(uploadsDir)
+}
 
 app.use('*', async (req, res, next) => {
 	res.status(404)
