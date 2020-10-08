@@ -9,7 +9,6 @@ const compression = require('compression')
 const helmet = require('helmet')
 const cors = require('cors')
 const morgan = require('morgan')
-const mongoose = require('mongoose')
 
 const { uploadsDir, databaseConfig } = require('../config')
 const routes = require('./routes')
@@ -24,9 +23,6 @@ app.use(express.json())
 if (app.get('env') === 'development') {
 	app.use(morgan('tiny'))
 }
-
-mongoose.connect(databaseConfig.uri, databaseConfig.settings)
-mongoose.connection.on('error', console.log)
 
 app.use(routes)
 
